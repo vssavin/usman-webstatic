@@ -16,6 +16,7 @@
     </properties>
 
     <modules>
+        <module>usman-webstatic-core</module>
         <module>usman-webstatic-spring5</module>
         <module>usman-webstatic-spring6</module>
     </modules>
