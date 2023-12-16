@@ -16,6 +16,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <properties>
+        <springframework.version>6.1.1</springframework.version>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
     </properties>
