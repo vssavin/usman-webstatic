@@ -189,7 +189,7 @@
                                 <sourceDirectory>${project.build.testSourceDirectory}</sourceDirectory>
                             </sourceDirectories>
                             <excludes>
-                                **/com/github/vssavin/usmanwebstatic/**/Launcher.java
+                                **/com/github/vssavin/usman_webstatic/**/Launcher.java
                             </excludes>
                         </configuration>
                     </execution>
