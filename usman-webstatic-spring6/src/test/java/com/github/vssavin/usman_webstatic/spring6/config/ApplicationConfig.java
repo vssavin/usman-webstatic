@@ -112,7 +112,8 @@ public class ApplicationConfig {
 
     /**
      * An example bean to print an encoded password in a specified file. Used in the
-     * ${@link UsmanPasswordEncodingArgumentsHandler} class.
+     * ${@link com.github.vssavin.usmancore.config.UsmanPasswordEncodingArgumentsHandler}
+     * class.
      * @return PrintStream bean.
      */
     @Bean
