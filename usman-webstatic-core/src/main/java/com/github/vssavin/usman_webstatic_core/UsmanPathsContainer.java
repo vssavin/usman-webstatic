@@ -4,11 +4,15 @@ import com.github.vssavin.usmancore.config.AuthorizedUrlPermission;
 import com.github.vssavin.usmancore.config.Permission;
 import com.github.vssavin.usmancore.config.PermissionPathsContainer;
 import com.github.vssavin.usmancore.config.UsmanUrlsConfigurer;
-import org.springframework.stereotype.Component;
 
 import java.util.*;
 
-@Component
+/**
+ * A {@link com.github.vssavin.usmancore.config.PermissionPathsContainer} implementation
+ * with webstatic permission paths.
+ *
+ * @author vssavin on 16.12.2023.
+ */
 public class UsmanPathsContainer implements PermissionPathsContainer {
 
     private final Map<Permission, List<AuthorizedUrlPermission>> container = new EnumMap<>(Permission.class);
