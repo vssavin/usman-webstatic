@@ -37,20 +37,7 @@ public class UsmanWebstaticBaseController {
 
     protected static final String USER_ATTRIBUTE = "user";
 
-    protected final UsmanLanguageUtils languageUtils;
-
-    protected final UsmanConfig umConfig;
-
-    /**
-     * Creates a new {@link UsmanWebstaticBaseController} with {@link UsmanLanguageUtils} and
-     * {@link com.github.vssavin.usmancore.config.UsmanConfig} params.
-     * @param languageUtils UmLanguage instance
-     * @param umConfig main configuration class
-     */
-    public UsmanWebstaticBaseController(UsmanLanguageUtils languageUtils, UsmanConfig umConfig) {
-        this.languageUtils = languageUtils;
-        this.umConfig = umConfig;
-    }
+    protected final UsmanLanguageUtils languageUtils = new UsmanLanguageUtils();
 
     /**
      * Adds all elements to {@link ModelAndView} instance using requested language.
@@ -78,9 +65,7 @@ public class UsmanWebstaticBaseController {
             modelAndView.addObject("encryptMethodName", encryptMethodName);
 
             modelAndView.addObject("languages", UsmanLocaleConfig.getAvailableLanguages());
-            if (languageUtils != null) {
-                modelAndView.addObject("langObject", languageUtils);
-            }
+            modelAndView.addObject("langObject", languageUtils);
         }
     }
 
@@ -116,9 +101,7 @@ public class UsmanWebstaticBaseController {
             modelAndView.addObject("encryptMethodName", encryptMethodName);
 
             modelAndView.addObject("languages", UsmanLocaleConfig.getAvailableLanguages());
-            if (languageUtils != null) {
-                modelAndView.addObject("langObject", languageUtils);
-            }
+            modelAndView.addObject("langObject", languageUtils);
         }
     }
 
