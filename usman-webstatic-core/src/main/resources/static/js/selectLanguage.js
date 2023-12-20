@@ -91,7 +91,7 @@ $.langToLocale = function(lang){
 $.getLanguages = function() {
     var retval = {};
     $.ajax({
-        url : '/um/languages',
+        url : '/usman/languages',
         type: 'GET',
         async: false,
         dataType: 'json'
