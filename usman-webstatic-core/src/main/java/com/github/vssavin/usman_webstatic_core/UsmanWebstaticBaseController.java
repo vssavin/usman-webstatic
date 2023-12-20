@@ -1,6 +1,5 @@
 package com.github.vssavin.usman_webstatic_core;
 
-import com.github.vssavin.usmancore.config.UsmanConfig;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Collection;
