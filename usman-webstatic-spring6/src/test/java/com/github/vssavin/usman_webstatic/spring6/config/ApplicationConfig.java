@@ -28,6 +28,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.PrintStream;
 import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -49,9 +50,11 @@ public class ApplicationConfig {
     }
 
     @Bean
-    public UsmanConfigurer usmanConfigurer() {
+    public UsmanConfigurer usmanConfigurer(UsmanUrlsConfigurer urlsConfigurer, OAuth2Config oAuth2Config,
+            List<PermissionPathsContainer> permissionPathsContainerList) {
 
-        UsmanConfigurer usmanConfigurer = new UsmanConfigurer();
+        UsmanConfigurer usmanConfigurer = new UsmanConfigurer(urlsConfigurer, oAuth2Config,
+                permissionPathsContainerList);
 
         usmanConfigurer.permission(new AuthorizedUrlPermission("/index.html", Permission.ANY_USER))
             .permission(new AuthorizedUrlPermission("/index", Permission.ANY_USER));
