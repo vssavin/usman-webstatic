@@ -31,12 +31,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ActiveProfiles("usman-test")
-@SpringBootTest(args = { "authService=rsa" }, properties = "spring.main.allow-bean-definition-overriding=true")
+@SpringBootTest(args = { "usman.secureService=rsa" }, properties = "spring.main.allow-bean-definition-overriding=true")
 @ContextConfiguration(classes = { ApplicationConfig.class, UsmanTemplateResolverConfig.class })
 @WebAppConfiguration
 public abstract class AbstractTest implements ArgumentsProcessedNotifier {
 
-    private static final String DEFAULT_SECURE_ENDPOINT = "/um/security/key";
+    private static final String DEFAULT_SECURE_ENDPOINT = "/usman/v1/security/key";
 
     protected MockMvc mockMvc;
 
