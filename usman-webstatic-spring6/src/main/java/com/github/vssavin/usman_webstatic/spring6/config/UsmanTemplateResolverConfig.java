@@ -30,7 +30,14 @@ public class UsmanTemplateResolverConfig implements WebMvcConfigurer {
     }
 
     @Bean
-    public SpringResourceTemplateResolver umTemplateResolver() {
+    public SpringTemplateEngine templateEngine(SpringResourceTemplateResolver usmanTemplateResolver) {
+        SpringTemplateEngine springTemplateEngine = new SpringTemplateEngine();
+        springTemplateEngine.addTemplateResolver(usmanTemplateResolver);
+        return springTemplateEngine;
+    }
+
+    @Bean
+    public SpringResourceTemplateResolver usmanTemplateResolver() {
         SpringResourceTemplateResolver templateResolver = new SpringResourceTemplateResolver();
         templateResolver.setPrefix("classpath:/template/usman/");
         templateResolver.setSuffix(".html");
@@ -52,7 +59,7 @@ public class UsmanTemplateResolverConfig implements WebMvcConfigurer {
         viewResolver.setTemplateEngine(templateEngine);
         viewResolver.setOrder(getResolverOrder());
         viewResolver.setCharacterEncoding("UTF-8");
-        templateEngine.addTemplateResolver(umTemplateResolver());
+        templateEngine.addTemplateResolver(usmanTemplateResolver());
         return viewResolver;
     }
 
