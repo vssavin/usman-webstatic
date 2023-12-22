@@ -67,7 +67,7 @@ public class ApplicationConfig {
 
         UsmanUrlsConfigurer usmanUrlsConfigurer = new UsmanUrlsConfigurer();
 
-        usmanUrlsConfigurer.successUrl("/index.html");
+        usmanUrlsConfigurer.successUrl("/index.html").adminSuccessUrl("/usman/v1/admin");
 
         return usmanUrlsConfigurer.configure();
     }
