@@ -32,7 +32,7 @@ public class UserDatabaseInitService {
     private final int countUsers;
 
     public UserDatabaseInitService(UserService userService, PasswordEncoder passwordEncoder,
-                                   DataSource usmanDataSource) {
+            DataSource usmanDataSource) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
         this.scriptExecutor = new SqlScriptExecutor(usmanDataSource);
