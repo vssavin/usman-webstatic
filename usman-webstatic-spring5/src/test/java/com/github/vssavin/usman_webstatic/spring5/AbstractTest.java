@@ -34,7 +34,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 @SpringBootTest(args = { "usman.secureService=rsa" }, properties = "spring.main.allow-bean-definition-overriding=true")
 @ContextConfiguration(classes = { ApplicationConfig.class, UsmanTemplateResolverConfig.class })
 @WebAppConfiguration
-public abstract class AbstractTest implements ArgumentsProcessedNotifier {
+public abstract class AbstractTest {
 
     private static final String DEFAULT_SECURE_ENDPOINT = "/usman/v1/security/key";
 
@@ -63,15 +63,9 @@ public abstract class AbstractTest implements ArgumentsProcessedNotifier {
         this.userDatabaseInitService = dataBaseInitServiceUser;
     }
 
-    @Override
-    public void notifyArgumentsProcessed(Class<?> aClass) {
-        if (aClass != null && UsmanSecureServiceArgumentsHandler.class.isAssignableFrom(aClass)) {
-            this.secureService = usmanConfigurer.getSecureService();
-        }
-    }
-
     @Before
     public void setup() {
+        this.secureService = usmanConfigurer.getSecureService();
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
             .apply(springSecurity())
             .addFilter(((request, response, chain) -> {
