@@ -70,7 +70,6 @@ public class AuthController extends UsmanWebstaticBaseController implements Argu
 
     /**
      * Manually register mappings for login and logout methods.
-     *
      * @throws NoSuchMethodException if login/logout methods not found
      */
     @PostConstruct
@@ -78,7 +77,7 @@ public class AuthController extends UsmanWebstaticBaseController implements Argu
         RequestMappingInfo.BuilderConfiguration options = new RequestMappingInfo.BuilderConfiguration();
         options.setPatternParser(new PathPatternParser());
 
-        //Methods to be executed when HTTP method and URL are called
+        // Methods to be executed when HTTP method and URL are called
         Method loginMethod = AuthController.class.getDeclaredMethod("getLogin", HttpServletRequest.class,
                 HttpServletResponse.class, String.class);
 
