@@ -71,7 +71,7 @@ public class UserDatabaseInitService {
     private void initScripts() {
         List<String> sourceFiles = new ArrayList<>();
         sourceFiles.add("/init_test.sql");
-        scriptExecutor.executeSqlScriptsFromResource(sourceFiles, "");
+        scriptExecutor.executeSqlScriptsFromResource(this.getClass(), sourceFiles, "");
     }
 
     public UserService getUserService() {
