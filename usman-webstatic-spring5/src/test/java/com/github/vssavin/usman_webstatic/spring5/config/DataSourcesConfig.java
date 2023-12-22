@@ -28,7 +28,7 @@ public class DataSourcesConfig {
                 .setType(H2)
                 .setScriptEncoding("UTF-8")
                 .ignoreFailedDrops(true)
-                .addScript("com/github/vssavin/usmancore/config/init.sql")
+                .addScript("init_test.sql")
                 .build();
         }
         return appDataSource;
