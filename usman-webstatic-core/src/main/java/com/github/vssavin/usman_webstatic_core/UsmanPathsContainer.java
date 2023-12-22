@@ -38,24 +38,24 @@ public class UsmanPathsContainer implements PermissionPathsContainer {
         List<AuthorizedUrlPermission> paths = new ArrayList<>();
         paths.add(new AuthorizedUrlPermission("/js/**", Permission.ANY_USER));
         paths.add(new AuthorizedUrlPermission("/css/**", Permission.ANY_USER));
-        paths.add(new AuthorizedUrlPermission("/usman/users/passwordRecovery", Permission.ANY_USER));
-        paths.add(new AuthorizedUrlPermission("/usman/users/perform-password-recovery", HttpMethod.POST.name(),
+        paths.add(new AuthorizedUrlPermission("/usman/v*/users/passwordRecovery", Permission.ANY_USER));
+        paths.add(new AuthorizedUrlPermission("/usman/v*/users/perform-password-recovery", HttpMethod.POST.name(),
                 Permission.ANY_USER));
 
         paths.add(new AuthorizedUrlPermission(this.usmanUrlsConfigurer.getRegistrationUrl(), Permission.ANY_USER));
 
         paths.add(new AuthorizedUrlPermission(this.usmanUrlsConfigurer.getPerformRegisterUrl(), Permission.ANY_USER));
 
-        paths.add(new AuthorizedUrlPermission("/usman/users/confirmUser", Permission.ANY_USER));
+        paths.add(new AuthorizedUrlPermission("/usman/v*/users/confirmUser", Permission.ANY_USER));
 
         paths.add(new AuthorizedUrlPermission(this.usmanUrlsConfigurer.getPerformRegisterUrl(), HttpMethod.POST.name(),
                 Permission.ANY_USER));
 
-        paths.add(new AuthorizedUrlPermission("/usman/security/key", Permission.ANY_USER));
+        paths.add(new AuthorizedUrlPermission("/usman/v*/security/key", Permission.ANY_USER));
         paths.add(new AuthorizedUrlPermission("/usman/users/perform-password-recovery", HttpMethod.POST.name(),
                 Permission.ANY_USER));
 
-        paths.add(new AuthorizedUrlPermission("/usman/languages", Permission.ANY_USER));
+        paths.add(new AuthorizedUrlPermission("/usman/v*/languages", Permission.ANY_USER));
         paths.add(new AuthorizedUrlPermission("/flags/**", Permission.ANY_USER));
         paths.add(new AuthorizedUrlPermission("/img/**", Permission.ANY_USER));
 
@@ -69,9 +69,9 @@ public class UsmanPathsContainer implements PermissionPathsContainer {
 
     private List<AuthorizedUrlPermission> getAdminOnlyPaths() {
         List<AuthorizedUrlPermission> paths = new ArrayList<>();
-        paths.add(new AuthorizedUrlPermission("/usman/admin**", Permission.ADMIN_ONLY));
-        paths.add(new AuthorizedUrlPermission("/usman/admin/**", Permission.ADMIN_ONLY));
-        paths.add(new AuthorizedUrlPermission("/usman/events/**", Permission.ADMIN_ONLY));
+        paths.add(new AuthorizedUrlPermission("/usman/v*/admin**", Permission.ADMIN_ONLY));
+        paths.add(new AuthorizedUrlPermission("/usman/v*/admin/**", Permission.ADMIN_ONLY));
+        paths.add(new AuthorizedUrlPermission("/usman/v*/events/**", Permission.ADMIN_ONLY));
         paths.add(new AuthorizedUrlPermission(this.usmanUrlsConfigurer.getAdminUrl() + "/*", Permission.ADMIN_ONLY));
 
         paths.add(new AuthorizedUrlPermission(this.usmanUrlsConfigurer.getAdminUrl() + "/*", HttpMethod.PATCH.name(),
@@ -86,12 +86,12 @@ public class UsmanPathsContainer implements PermissionPathsContainer {
 
     private List<AuthorizedUrlPermission> getUserAdminPaths() {
         List<AuthorizedUrlPermission> paths = new ArrayList<>();
-        paths.add(new AuthorizedUrlPermission("/usman/users/**", Permission.USER_ADMIN));
+        paths.add(new AuthorizedUrlPermission("/usman/v*/users/**", Permission.USER_ADMIN));
         paths.add(new AuthorizedUrlPermission(this.usmanUrlsConfigurer.getLogoutUrl(), Permission.USER_ADMIN));
         paths.add(new AuthorizedUrlPermission(this.usmanUrlsConfigurer.getPerformLogoutUrl(), Permission.USER_ADMIN));
-        paths.add(new AuthorizedUrlPermission("/usman/users/changePassword", HttpMethod.PATCH.name(),
+        paths.add(new AuthorizedUrlPermission("/usman/v*/users/changePassword", HttpMethod.PATCH.name(),
                 Permission.USER_ADMIN));
-        paths.add(new AuthorizedUrlPermission("/usman/users", HttpMethod.PATCH.name(), Permission.USER_ADMIN));
+        paths.add(new AuthorizedUrlPermission("/usman/v*/users", HttpMethod.PATCH.name(), Permission.USER_ADMIN));
         paths.add(new AuthorizedUrlPermission("/*", Permission.USER_ADMIN));
         return paths;
     }
