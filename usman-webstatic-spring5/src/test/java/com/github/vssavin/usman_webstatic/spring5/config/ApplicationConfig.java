@@ -36,7 +36,7 @@ import java.util.Properties;
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = "com.github.vssavin.usmancore.*")
 @EnableWebSecurity
-@Import({ DefaultSecurityConfig.class, DefaultBeansConfig.class, TestsConfig.class })
+@Import({ DefaultSecurityConfig.class, TestsConfig.class })
 public class ApplicationConfig {
 
     private static final Logger log = LoggerFactory.getLogger(ApplicationConfig.class);

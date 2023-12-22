@@ -4,6 +4,8 @@ import com.github.vssavin.usmancore.config.SqlScriptExecutor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.sql.DataSource;
@@ -15,13 +17,17 @@ import javax.sql.DataSource;
 public class TestsConfig {
 
     @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
     public RequestMappingHandlerMapping requestMappingHandlerMapping() {
         // add properties here
         return new RequestMappingHandlerMapping();
     }
 
     @Bean
-    @Primary
     public SqlScriptExecutor sqlScriptExecutor(DataSource usmanDataSource) {
         return new SqlScriptExecutor(usmanDataSource);
     }
