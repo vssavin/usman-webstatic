@@ -1,4 +1,4 @@
-package com.github.vssavin.usman_webstatic.spring6.security;
+package com.github.vssavin.usman_webstatic.spring6.api.v1.security;
 
 import com.github.vssavin.usmancore.config.ArgumentsProcessedNotifier;
 import com.github.vssavin.usmancore.config.UsmanConfigurer;
@@ -20,7 +20,7 @@ import java.util.List;
  * @author vssavin on 20.12.2023.
  */
 @RestController
-@RequestMapping("/usman/security")
+@RequestMapping("/usman/v1/security")
 class SecurityController implements ArgumentsProcessedNotifier {
 
     private final List<String> secureServiceNames;

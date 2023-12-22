@@ -1,6 +1,10 @@
-getKey = function() {
+getKey = function(apiVersion) {
     var xmlHttp = new XMLHttpRequest();
-    xmlHttp.open("GET", '/usman/security/key', false);
+    if (typeof apiVersion === 'string') {
+        xmlHttp.open("GET", '/usman/v' + apiVersion + 'security/key', false);
+    } else {
+        xmlHttp.open("GET", '/usman/v1/security/key', false);
+    }
     xmlHttp.send(null);
     return xmlHttp.responseText;
 };

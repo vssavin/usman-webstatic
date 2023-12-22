@@ -1,4 +1,4 @@
-package com.github.vssavin.usman_webstatic.spring6.language;
+package com.github.vssavin.usman_webstatic.spring5.api.v1.language;
 
 import com.github.vssavin.usman_webstatic_core.UsmanLocaleConfig;
 import org.springframework.http.HttpStatus;
@@ -16,7 +16,7 @@ import java.util.Map;
 @RestController
 class LanguageController {
 
-    @GetMapping("/usman/languages")
+    @GetMapping("/usman/v1/languages")
     ResponseEntity<Map<String, String>> getLanguage() {
         return new ResponseEntity<>(UsmanLocaleConfig.getAvailableLanguages(), HttpStatus.OK);
     }

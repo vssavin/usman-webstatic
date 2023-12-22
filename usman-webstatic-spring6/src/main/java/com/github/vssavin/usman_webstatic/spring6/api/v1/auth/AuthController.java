@@ -1,10 +1,14 @@
-package com.github.vssavin.usman_webstatic.spring5.auth;
+package com.github.vssavin.usman_webstatic.spring6.api.v1.auth;
 
-import com.github.vssavin.usman_webstatic.spring5.config.Spring5LocaleConfig;
+import com.github.vssavin.usman_webstatic.spring6.config.Spring6LocaleConfig;
 import com.github.vssavin.usman_webstatic_core.UsmanWebstaticBaseController;
-import com.github.vssavin.usmancore.config.*;
+import com.github.vssavin.usmancore.config.ArgumentsProcessedNotifier;
+import com.github.vssavin.usmancore.config.UsmanConfigurer;
+import com.github.vssavin.usmancore.config.UsmanSecureServiceArgumentsHandler;
+import com.github.vssavin.usmancore.config.UsmanUrlsConfigurer;
 import com.github.vssavin.usmancore.security.SecureService;
-import com.github.vssavin.usmancore.spring5.user.UserSecurityService;
+import com.github.vssavin.usmancore.spring6.user.UserSecurityService;
+import jakarta.annotation.PostConstruct;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,18 +16,17 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
+
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 import org.springframework.web.util.pattern.PathPatternParser;
 
-import javax.annotation.PostConstruct;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Authentication controller - allows user authentication.
@@ -54,7 +57,7 @@ public class AuthController extends UsmanWebstaticBaseController implements Argu
     private SecureService secureService;
 
     @Autowired
-    AuthController(Spring5LocaleConfig localeConfig, UsmanConfigurer usmanConfigurer,
+    AuthController(Spring6LocaleConfig localeConfig, UsmanConfigurer usmanConfigurer,
             UsmanUrlsConfigurer urlsConfigurer, UserSecurityService userSecurityService,
             RequestMappingHandlerMapping handlerMapping) {
         this.secureService = usmanConfigurer.getSecureService();
@@ -126,9 +129,7 @@ public class AuthController extends UsmanWebstaticBaseController implements Argu
 
     private List<String> normalizeScriptNames(List<String> scripts) {
         String jsPrefix = "/js";
-        return scripts.stream()
-            .map(scriptName -> scriptName.substring(scriptName.indexOf(jsPrefix)))
-            .collect(Collectors.toList());
+        return scripts.stream().map(scriptName -> scriptName.substring(scriptName.indexOf(jsPrefix))).toList();
     }
 
     @Override

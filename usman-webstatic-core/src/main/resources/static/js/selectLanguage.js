@@ -88,10 +88,14 @@ $.langToLocale = function(lang){
     else if (lang.includes("En")) return "en";
 }
 
-$.getLanguages = function() {
+$.getLanguages = function(apiVersion) {
+    var apiUrl = '/usman/v1/languages';
+    if (typeof apiVersion === 'string') {
+        apiUrl = '/usman/v' + apiVersion + '/languages';
+    }
     var retval = {};
     $.ajax({
-        url : '/usman/languages',
+        url : apiUrl,
         type: 'GET',
         async: false,
         dataType: 'json'
