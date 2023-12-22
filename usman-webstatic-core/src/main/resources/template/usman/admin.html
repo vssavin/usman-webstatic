@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org"
+      lang="ru">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title th:text="${title}">Панель администрирования</title>
+
+    <!-- JQuery -->
+
+    <script th:src="@{/js/jquery-1.10.0.min.js}"></script>
+
+    <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
+    <link th:href="@{/css/flag-icon.css}" rel="stylesheet"/>
+
+    <script th:src="@{/js/bootstrap.bundle.js}"></script>
+
+    <!--Bootstrap-select -->
+    <!-- Latest compiled and minified JavaScript -->
+
+    <link rel="stylesheet" th:href="@{/css/bootstrap-select-1.14.0-beta2.min.css}">
+    <script th:src="@{/js/bootstrap-select-1.14.0-beta2.min.js}"></script>
+
+    <script th:src="@{/js/selectLanguage.js}"></script>
+
+    <style>
+        p.pStyle {
+        margin: auto 1em auto 1em
+        }
+
+    </style>
+</head>
+<body>
+<h1 align="center" th:text="${title}">Панель администрирования</h1>
+
+<div class="container">
+    <div th:insert="~{fragments/language :: language_fragment}"></div>
+    <div th:insert="~{fragments/greetingAndLogout :: greeting_logout_fragment}"></div>
+</div>
+
+<div th:insert="~{fragments/home :: home_fragment}"></div>
+<p></p>
+
+<p align="left" class="pStyle">
+    <a th:href="@{/usman/v1/admin/registration} + '?lang=' + ${urlLang}" class="btn-lg" th:text="${createUserTitle}"
+       target="_blank">Создать пользователя</a>
+</p>
+<p align="left" class="pStyle">
+    <a th:href="@{/usman/v1/users/changePassword} + '?lang=' + ${urlLang}" class="btn-lg"
+       th:text="${changePasswordTitle}" target="_blank">Изменить пароль</a>
+</p>
+<p align="left" class="pStyle">
+    <a th:href="@{/usman/v1/admin/changeUserPassword} + '?lang=' + ${urlLang}" class="btn-lg"
+       th:text="${changeUserPasswordTitle}" target="_blank">Изменить пароль пользователя</a>
+</p>
+<p align="left" class="pStyle">
+    <a th:href="@{/usman/v1/admin/adminConfirmUser} + '?lang=' + ${urlLang}" class="btn-lg"
+       th:text="${confirmUserTitle}" target="_blank">Изменить пароль пользователя</a>
+</p>
+<p align="left" class="pStyle">
+    <a th:href="@{/usman/v1/admin/users} + '?lang=' + ${urlLang}" class="btn-lg"
+       th:text="${userListTitle}" target="_blank">Список пользователей</a>
+</p>
+<p align="left" class="pStyle">
+    <a th:href="@{/usman/v1/events} + '?lang=' + ${urlLang}" class="btn-lg"
+       th:text="${eventsTitle}" target="_blank">Журнал событий</a>
+</p>
+
+</body>
