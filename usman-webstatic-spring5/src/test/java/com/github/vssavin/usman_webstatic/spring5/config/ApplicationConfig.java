@@ -21,6 +21,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.filter.HiddenHttpMethodFilter;
+import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
@@ -35,7 +36,7 @@ import java.util.Properties;
  * @author vssavin on 17.12.2023.
  */
 @Configuration
-@ComponentScan({ "com.github.vssavin.usmancore.*" })
+@ComponentScan({ "com.github.vssavin.usmancore.*", "com.github.vssavin.usman_webstatic.spring5.*" })
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = "com.github.vssavin.usmancore.*")
 @EnableWebSecurity
@@ -43,6 +44,12 @@ import java.util.Properties;
 public class ApplicationConfig {
 
     private static final Logger log = LoggerFactory.getLogger(ApplicationConfig.class);
+
+    @Bean
+    public RequestMappingHandlerMapping requestMappingHandlerMapping() {
+        // add properties here
+        return new RequestMappingHandlerMapping();
+    }
 
     @Bean
     public JavaMailSender emailSender() {
