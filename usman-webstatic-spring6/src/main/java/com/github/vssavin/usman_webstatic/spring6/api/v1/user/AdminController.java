@@ -101,8 +101,8 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
 
     @Autowired
     AdminController(UsmanConfigurer usmanConfigurer, UsmanUrlsConfigurer urlsConfigurer, UsmanLocaleConfig localeConfig,
-                    UserService userService, UserSecurityService userSecurityService, PasswordEncoder passwordEncoder,
-                    UserMapper userMapper) {
+            UserService userService, UserSecurityService userSecurityService, PasswordEncoder passwordEncoder,
+            UserMapper userMapper) {
         this.usmanConfigurer = usmanConfigurer;
         this.urlsConfigurer = urlsConfigurer;
         this.userService = userService;
