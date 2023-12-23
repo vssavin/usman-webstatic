@@ -43,6 +43,9 @@ public class UsmanPathsContainer implements PermissionPathsContainer {
                 Permission.ANY_USER));
 
         paths.add(new AuthorizedUrlPermission(this.usmanUrlsConfigurer.getRegistrationUrl(), Permission.ANY_USER));
+        paths.add(new AuthorizedUrlPermission("/usman/v*/users/registration", Permission.ANY_USER));
+        paths.add(new AuthorizedUrlPermission("/usman/v*/users/perform-register", HttpMethod.POST.name(),
+                Permission.ANY_USER));
 
         paths.add(new AuthorizedUrlPermission(this.usmanUrlsConfigurer.getPerformRegisterUrl(), Permission.ANY_USER));
 
