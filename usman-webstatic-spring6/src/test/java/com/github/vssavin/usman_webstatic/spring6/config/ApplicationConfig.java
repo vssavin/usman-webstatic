@@ -35,11 +35,11 @@ import java.util.Properties;
  * @author vssavin on 17.12.2023.
  */
 @Configuration
-@ComponentScan({ "com.github.vssavin.usmancore.*", "com.github.vssavin.usman_webstatic.*" })
+@ComponentScan({ "com.github.vssavin.usmancore.*", "com.github.vssavin.usman_webstatic.spring5.*" })
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = "com.github.vssavin.usmancore.*")
 @EnableWebSecurity
-@Import({ DefaultSecurityConfig.class, DefaultBeansConfig.class })
+@Import({ DefaultSecurityConfig.class, TestsConfig.class })
 public class ApplicationConfig {
 
     private static final Logger log = LoggerFactory.getLogger(ApplicationConfig.class);
