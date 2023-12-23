@@ -3,6 +3,7 @@ package com.github.vssavin.usman_webstatic.spring5.config;
 import com.github.vssavin.usmancore.config.SqlScriptExecutor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
@@ -21,6 +22,7 @@ public class TestsConfig {
     }
 
     @Bean
+    @Profile("usman-test")
     public RequestMappingHandlerMapping requestMappingHandlerMapping() {
         // add properties here
         return new RequestMappingHandlerMapping();
