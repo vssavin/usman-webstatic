@@ -1,6 +1,8 @@
 package com.github.vssavin.usman_webstatic.spring5.user;
 
 import com.github.vssavin.usmancore.config.Role;
+import com.github.vssavin.usmancore.spring5.user.User;
+import com.github.vssavin.usmancore.spring5.user.UserRepository;
 import com.github.vssavin.usmancore.spring5.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,7 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
-import javax.sql.DataSource;
+import java.util.ArrayList;
 
 /**
  * @author vssavin on 22.12.2023.
@@ -24,12 +26,17 @@ public class UserDatabaseInitService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final UserRepository userRepository;
+
     private final int countUsers;
 
+    private Iterable<User> initUsers = new ArrayList<>();
+
     public UserDatabaseInitService(UserService userService, PasswordEncoder passwordEncoder,
-            DataSource usmanDataSource) {
+            UserRepository userRepository) {
         this.userService = userService;
         this.passwordEncoder = passwordEncoder;
+        this.userRepository = userRepository;
         String countUsersString = System.getProperty("userGenerator.count");
         int tmpCountUsers = DEFAULT_USERS_COUNT;
         if (countUsersString != null) {
@@ -46,6 +53,14 @@ public class UserDatabaseInitService {
 
     @PostConstruct
     public void initUserDatabase() {
+        if (!initUsers.iterator().hasNext()) {
+            initUsers = userRepository.findAll();
+        }
+        userRepository.deleteAll();
+        if (initUsers.iterator().hasNext()) {
+            userRepository.saveAll(initUsers);
+        }
+
         for (int i = 0; i < countUsers; i++) {
             String login = String.valueOf(i);
             String name = String.valueOf(i);
