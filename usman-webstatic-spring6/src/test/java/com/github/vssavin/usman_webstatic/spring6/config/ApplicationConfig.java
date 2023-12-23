@@ -35,7 +35,7 @@ import java.util.Properties;
  * @author vssavin on 17.12.2023.
  */
 @Configuration
-@ComponentScan({ "com.github.vssavin.usmancore.*", "com.github.vssavin.usman_webstatic.spring5.*" })
+@ComponentScan({ "com.github.vssavin.usmancore.*", "com.github.vssavin.usman_webstatic.spring6.*" })
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = "com.github.vssavin.usmancore.*")
 @EnableWebSecurity
