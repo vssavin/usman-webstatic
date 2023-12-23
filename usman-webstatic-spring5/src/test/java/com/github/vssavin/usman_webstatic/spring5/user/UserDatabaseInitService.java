@@ -11,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author vssavin on 22.12.2023.
@@ -29,6 +31,8 @@ public class UserDatabaseInitService {
     private final UserRepository userRepository;
 
     private final int countUsers;
+
+    private final Map<String, String> passwordHashes = new HashMap<>();
 
     private Iterable<User> initUsers = new ArrayList<>();
 
@@ -64,7 +68,11 @@ public class UserDatabaseInitService {
         for (int i = 0; i < countUsers; i++) {
             String login = String.valueOf(i);
             String name = String.valueOf(i);
-            String password = passwordEncoder.encode(login);
+            String password = passwordHashes.get(login);
+            if (password == null) {
+                password = passwordEncoder.encode(login);
+                passwordHashes.put(login, password);
+            }
             String email = login + "@" + login + ".com";
             Role role = Role.ROLE_USER;
             try {
