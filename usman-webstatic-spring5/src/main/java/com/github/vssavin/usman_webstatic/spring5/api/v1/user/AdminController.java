@@ -44,6 +44,8 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
 
     static final String ADMIN_CONTROLLER_PATH = "/usman/v1/admin";
 
+    private static final String CONFIRM_USER_URL = "/usman/v1/users/confirmUser";
+
     private static final Logger log = LoggerFactory.getLogger(AdminController.class);
 
     private static final String PAGE_USERS = "users";
@@ -162,6 +164,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
         }
 
         addObjectsToModelAndView(modelAndView, pageAdminConfirmUserParams, secureService.getEncryptMethodName(), lang);
+        modelAndView.addObject("confirmAction", CONFIRM_USER_URL);
 
         return modelAndView;
     }
