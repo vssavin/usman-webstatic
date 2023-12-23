@@ -1,4 +1,4 @@
-package com.github.vssavin.usman_webstatic.spring6.user;
+package com.github.vssavin.usman_webstatic.spring6.api.v1.user;
 
 import com.github.vssavin.usman_webstatic.spring6.AbstractTest;
 import com.github.vssavin.usman_webstatic_core.MessageKey;
@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  */
 public class AdminControllerTest extends AbstractTest {
 
-    private static final String BASE_URL = "/usman/v1/admin";
+    private static final String BASE_URL = AdminController.ADMIN_CONTROLLER_PATH;
 
     private UsmanLocaleConfig.LocaleSpringMessageSource registrationMessageSource;
 
