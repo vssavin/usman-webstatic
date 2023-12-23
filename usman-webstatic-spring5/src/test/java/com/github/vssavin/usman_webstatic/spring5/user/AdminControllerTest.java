@@ -7,6 +7,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,6 +41,11 @@ public class AdminControllerTest extends AbstractTest {
     public void setChangeUserPasswordMessageSource(
             UsmanLocaleConfig.LocaleSpringMessageSource changeUserPasswordMessageSource) {
         this.changeUserPasswordMessageSource = changeUserPasswordMessageSource;
+    }
+
+    @Before
+    public void initDatabase() {
+        userDatabaseInitService.initUserDatabase();
     }
 
     @Test
@@ -263,7 +269,6 @@ public class AdminControllerTest extends AbstractTest {
         Assertions.assertNotNull(modelAndView);
         boolean error = modelAndView.getModel().containsKey("error");
         Assertions.assertFalse(error);
-        userDatabaseInitService.initUserDatabase();
     }
 
     @Test
