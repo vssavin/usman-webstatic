@@ -510,7 +510,7 @@ final class UserController extends Spring5WebstaticBaseController implements Arg
         return modelAndView;
     }
 
-    @PatchMapping("/")
+    @PatchMapping({"", "/"})
     ModelAndView performUserEdit(final HttpServletRequest request, final HttpServletResponse response,
             @ModelAttribute final UserDto userDto, @RequestParam(required = false) final String lang) {
 
