@@ -11,7 +11,7 @@ import com.github.vssavin.usmancore.event.EventDto;
 import com.github.vssavin.usmancore.event.EventFilter;
 import com.github.vssavin.usmancore.event.EventType;
 import com.github.vssavin.usmancore.security.SecureService;
-import com.github.vssavin.usmancore.spring6.data.pagination.Paged;
+import com.github.vssavin.usmancore.data.pagination.Paged;
 import com.github.vssavin.usmancore.spring6.event.EventService;
 import com.github.vssavin.usmancore.spring6.user.UserSecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
