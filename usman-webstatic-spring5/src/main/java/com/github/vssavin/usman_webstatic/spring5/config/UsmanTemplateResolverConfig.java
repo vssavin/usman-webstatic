@@ -23,10 +23,10 @@ public class UsmanTemplateResolverConfig implements WebMvcConfigurer {
 
     private final Logger log = LoggerFactory.getLogger(UsmanTemplateResolverConfig.class);
 
-    private final UsmanConfigurer umConfigurer;
+    private final UsmanConfigurer usmanConfigurer;
 
-    public UsmanTemplateResolverConfig(UsmanConfigurer umConfigurer) {
-        this.umConfigurer = umConfigurer;
+    public UsmanTemplateResolverConfig(UsmanConfigurer usmanConfigurer) {
+        this.usmanConfigurer = usmanConfigurer;
     }
 
     @Bean
@@ -65,7 +65,7 @@ public class UsmanTemplateResolverConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(@NonNull ResourceHandlerRegistry registry) {
-        umConfigurer.getResourceHandlers()
+        usmanConfigurer.getResourceHandlers()
             .forEach((handler, locations) -> registry.addResourceHandler(handler).addResourceLocations(locations));
     }
 
