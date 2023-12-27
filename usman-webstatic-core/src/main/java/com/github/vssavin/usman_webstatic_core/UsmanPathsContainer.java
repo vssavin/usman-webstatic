@@ -59,6 +59,7 @@ public class UsmanPathsContainer implements PermissionPathsContainer {
                 Permission.ANY_USER));
 
         paths.add(new AuthorizedUrlPermission("/usman/v*/languages", Permission.ANY_USER));
+        paths.add(new AuthorizedUrlPermission("/usman/v*/languages/**", Permission.ANY_USER));
         paths.add(new AuthorizedUrlPermission("/flags/**", Permission.ANY_USER));
         paths.add(new AuthorizedUrlPermission("/img/**", Permission.ANY_USER));
 
