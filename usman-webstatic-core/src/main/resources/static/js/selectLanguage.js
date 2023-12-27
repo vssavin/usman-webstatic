@@ -45,25 +45,13 @@ $(document).ready(function() {
     });
 
     var languagesJSON = $.getLanguages();
+    var defaultLanguage = $.getDefaultLanguage();
     var languagesMap = new Map(Object.entries(languagesJSON));
 
     var windowHref = '//' + location.host + location.pathname + location.search;
 
     if (lang == null) {
-        var browserLang = navigator.language || navigator.userLanguage;
-        browserLang = browserLang.substring(0,2);
-        if(location.search.length == 0) {
-            if (languagesMap.has(browserLang)) window.location.href = windowHref + "?lang=" + browserLang;
-            else {
-                window.location.href = windowHref + "?lang=" + languagesMap.keys().next().value;
-            }
-        }
-        else {
-            if (languagesMap.has(browserLang)) window.location.href = windowHref + "&lang=" + browserLang;
-            else {
-                window.location.href = windowHref + "&lang=" + languagesMap.keys().next().value;
-            }
-        }
+        window.location.href = windowHref + "?lang=" + defaultLanguage;
     }
     else {
         $('.selectpicker').selectpicker('val',languagesMap.get(lang));
@@ -87,6 +75,27 @@ $.langToLocale = function(lang){
     if (lang.includes("Рус")) return "ru";
     else if (lang.includes("En")) return "en";
 }
+
+$.getDefaultLanguage = function(apiVersion) {
+    var apiUrl = '/usman/v1/languages/default';
+    if (typeof apiVersion === 'string') {
+        apiUrl = '/usman/v' + apiVersion + '/languages/default';
+    }
+    var retval = {};
+    $.ajax({
+        url : apiUrl,
+        type: 'GET',
+        async: false,
+        dataType: 'json'
+
+    }).done(function(response){
+        retval = response;
+    }).fail(function(jqXHR, textStatus, errorThrown) {
+        retval = null;
+    });
+
+    return retval;
+};
 
 $.getLanguages = function(apiVersion) {
     var apiUrl = '/usman/v1/languages';
