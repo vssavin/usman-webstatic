@@ -20,6 +20,7 @@ import com.github.vssavin.usmancore.user.UserFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -141,7 +142,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
         }
         else {
             modelAndView = getErrorModelAndView(ERROR_PAGE, MessageKey.AUTHENTICATION_REQUIRED_MESSAGE, lang);
-            response.setStatus(500);
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
         }
 
         addObjectsToModelAndView(modelAndView, pageAdminParams, secureService.getEncryptMethodName(), lang);
@@ -160,7 +161,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
         }
         else {
             modelAndView = getErrorModelAndView(ERROR_PAGE, MessageKey.AUTHENTICATION_REQUIRED_MESSAGE, lang);
-            response.setStatus(403);
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
         }
 
         addObjectsToModelAndView(modelAndView, pageAdminConfirmUserParams, secureService.getEncryptMethodName(), lang);
@@ -170,7 +171,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
     }
 
     @GetMapping(value = { "/" + PAGE_REGISTRATION, "/" + PAGE_REGISTRATION + ".html" })
-    ModelAndView registration(final HttpServletRequest request, final Model model,
+    ModelAndView registration(final HttpServletRequest request, HttpServletResponse response, final Model model,
             @RequestParam(required = false) final String lang) {
         ModelAndView modelAndView;
         String authorizedName = userSecurityService.getAuthorizedUserName(request);
@@ -181,9 +182,9 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
         }
         else {
             modelAndView = new ModelAndView(ERROR_PAGE, model.asMap());
-
             modelAndView.addObject(ERROR_MSG_ATTRIBUTE, UsmanLocaleConfig.getMessage(PAGE_REGISTRATION,
                     MessageKey.AUTHENTICATION_REQUIRED_MESSAGE.getKey(), lang));
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
         }
 
         addObjectsToModelAndView(modelAndView, pageRegistrationParams, secureService.getEncryptMethodName(), lang);
@@ -206,7 +207,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
         if (!userSecurityService.isAuthorizedAdmin(request)) {
             modelAndView = getErrorModelAndView(PAGE_REGISTRATION, MessageKey.AUTHENTICATION_REQUIRED_MESSAGE, lang);
             addObjectsToModelAndView(modelAndView, pageRegistrationParams, secureService.getEncryptMethodName(), lang);
-            response.setStatus(500);
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return modelAndView;
         }
 
@@ -219,7 +220,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
                         lang);
                 addObjectsToModelAndView(modelAndView, pageRegistrationParams, secureService.getEncryptMethodName(),
                         lang);
-                response.setStatus(400);
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return modelAndView;
             }
 
@@ -227,7 +228,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
                 modelAndView = getErrorModelAndView(PAGE_REGISTRATION, MessageKey.EMAIL_NOT_VALID_MESSAGE, lang);
                 addObjectsToModelAndView(modelAndView, pageRegistrationParams, secureService.getEncryptMethodName(),
                         lang);
-                response.setStatus(400);
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return modelAndView;
             }
 
@@ -235,7 +236,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
                 modelAndView = new ModelAndView("redirect:" + PAGE_REGISTRATION);
                 modelAndView.addObject(ERROR_ATTRIBUTE, true);
                 modelAndView.addObject(ERROR_MSG_ATTRIBUTE, usmanConfigurer.getPasswordPatternErrorMessage());
-                response.setStatus(400);
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return modelAndView;
             }
 
@@ -243,7 +244,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
                 modelAndView = getErrorModelAndView(PAGE_REGISTRATION, MessageKey.EMAIL_EXISTS_MESSAGE, lang);
                 addObjectsToModelAndView(modelAndView, pageRegistrationParams, secureService.getEncryptMethodName(),
                         lang);
-                response.setStatus(400);
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return modelAndView;
             }
 
@@ -257,14 +258,14 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
             log.error("User exists! ", e);
             modelAndView = getErrorModelAndView(PAGE_REGISTRATION, MessageKey.USER_EXISTS_PATTERN, lang, username);
             addObjectsToModelAndView(modelAndView, pageRegistrationParams, secureService.getEncryptMethodName(), lang);
-            response.setStatus(400);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
             return modelAndView;
         }
         catch (Exception e) {
             log.error("User registration error! ", e);
             modelAndView = getErrorModelAndView(PAGE_REGISTRATION, MessageKey.CREATE_USER_ERROR_MESSAGE, lang);
             addObjectsToModelAndView(modelAndView, pageRegistrationParams, secureService.getEncryptMethodName(), lang);
-            response.setStatus(500);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return modelAndView;
         }
 
@@ -277,12 +278,13 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
 
     @GetMapping(value = { "/" + PAGE_CHANGE_USER_PASSWORD, "/" + PAGE_CHANGE_USER_PASSWORD + ".html" },
             produces = { "application/json; charset=utf-8" })
-    ModelAndView changeUserPassword(final HttpServletRequest request,
+    ModelAndView changeUserPassword(final HttpServletRequest request, final HttpServletResponse response,
             @RequestParam(required = false) final String lang) {
         ModelAndView modelAndView = new ModelAndView(PAGE_CHANGE_USER_PASSWORD);
         String authorizedName = userSecurityService.getAuthorizedUserName(request);
         if (!isAuthorizedUser(authorizedName)) {
             modelAndView = getErrorModelAndView(ERROR_PAGE, MessageKey.AUTHENTICATION_REQUIRED_MESSAGE, lang);
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
         }
 
         modelAndView.addObject(USER_NAME_ATTRIBUTE, authorizedName);
@@ -313,7 +315,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
                             lang);
                     addObjectsToModelAndView(modelAndView, pageChangeUserPasswordParams,
                             secureService.getEncryptMethodName(), lang);
-                    response.setStatus(404);
+                    response.setStatus(HttpStatus.NOT_FOUND.value());
                     return modelAndView;
                 }
             }
@@ -322,7 +324,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
                         MessageKey.AUTHENTICATION_REQUIRED_MESSAGE, lang);
                 addObjectsToModelAndView(modelAndView, pageChangeUserPasswordParams,
                         secureService.getEncryptMethodName(), lang);
-                response.setStatus(403);
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 return modelAndView;
             }
 
@@ -332,7 +334,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
             modelAndView = getErrorModelAndView(PAGE_CHANGE_USER_PASSWORD, MessageKey.USER_NOT_FOUND_MESSAGE, lang);
             addObjectsToModelAndView(modelAndView, pageChangeUserPasswordParams, secureService.getEncryptMethodName(),
                     lang);
-            response.setStatus(404);
+            response.setStatus(HttpStatus.NOT_FOUND.value());
             return modelAndView;
         }
         catch (Exception ex) {
@@ -340,13 +342,13 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
             modelAndView = getErrorModelAndView(PAGE_CHANGE_USER_PASSWORD, MessageKey.REQUEST_PROCESSING_ERROR, lang);
             addObjectsToModelAndView(modelAndView, pageChangeUserPasswordParams, secureService.getEncryptMethodName(),
                     lang);
-            response.setStatus(500);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return modelAndView;
         }
 
         modelAndView = getSuccessModelAndView(PAGE_CHANGE_USER_PASSWORD,
                 MessageKey.PASSWORD_SUCCESSFULLY_CHANGED_MESSAGE, lang);
-        response.setStatus(200);
+        response.setStatus(HttpStatus.OK.value());
         addObjectsToModelAndView(modelAndView, pageChangeUserPasswordParams, secureService.getEncryptMethodName(),
                 lang);
         addObjectsToModelAndView(modelAndView, request.getParameterMap(), IGNORED_PARAMS);
@@ -371,7 +373,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
             modelAndView = getErrorModelAndView(urlsConfigurer.getLoginUrl(),
                     MessageKey.ADMIN_AUTHENTICATION_REQUIRED_MESSAGE, lang);
             addObjectsToModelAndView(modelAndView, pageLoginParams, secureService.getEncryptMethodName(), lang);
-            response.setStatus(403);
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
         }
 
         addObjectsToModelAndView(modelAndView, pageUsersParams, secureService.getEncryptMethodName(), lang);
@@ -398,7 +400,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
             modelAndView = getErrorModelAndView(urlsConfigurer.getLoginUrl(),
                     MessageKey.ADMIN_AUTHENTICATION_REQUIRED_MESSAGE, lang);
             addObjectsToModelAndView(modelAndView, pageLoginParams, secureService.getEncryptMethodName(), lang);
-            response.setStatus(403);
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
             addObjectsToModelAndView(modelAndView, request.getParameterMap(), IGNORED_PARAMS);
             return modelAndView;
         }
@@ -428,7 +430,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
                 if (!isValidUserEmail(userDto.getEmail())) {
                     modelAndView = getErrorModelAndView(PAGE_USERS, MessageKey.EMAIL_NOT_VALID_MESSAGE, lang);
                     addObjectsToModelAndView(modelAndView, pageUsersParams, secureService.getEncryptMethodName(), lang);
-                    response.setStatus(400);
+                    response.setStatus(HttpStatus.BAD_REQUEST.value());
                     return modelAndView;
                 }
 
@@ -436,7 +438,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
                     modelAndView = getErrorModelAndView(PAGE_USERS, MessageKey.USER_EXISTS_PATTERN, lang,
                             userDto.getLogin());
                     addObjectsToModelAndView(modelAndView, pageUsersParams, secureService.getEncryptMethodName(), lang);
-                    response.setStatus(400);
+                    response.setStatus(HttpStatus.BAD_REQUEST.value());
                     return modelAndView;
                 }
 
@@ -465,7 +467,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
                 modelAndView = getErrorModelAndView(urlsConfigurer.getLoginUrl(),
                         MessageKey.ADMIN_AUTHENTICATION_REQUIRED_MESSAGE, lang);
                 addObjectsToModelAndView(modelAndView, pageLoginParams, secureService.getEncryptMethodName(), lang);
-                response.setStatus(403);
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 return modelAndView;
             }
         }
@@ -473,6 +475,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
             log.error("User update error! ", e);
             modelAndView = getErrorModelAndView(urlsConfigurer.getLoginUrl(), MessageKey.USER_EDIT_ERROR_MESSAGE, lang);
             addObjectsToModelAndView(modelAndView, pageUserEditParams, secureService.getEncryptMethodName(), lang);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return modelAndView;
         }
 
@@ -515,14 +518,14 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
                         MessageKey.USER_DELETE_ERROR_MESSAGE.getKey(), lang);
                 modelAndView.addObject(ERROR_ATTRIBUTE, true);
                 modelAndView.addObject(ERROR_MSG_ATTRIBUTE, errorMessage);
-                response.setStatus(404);
+                response.setStatus(HttpStatus.NOT_FOUND.value());
             }
         }
         else {
             modelAndView = getErrorModelAndView(urlsConfigurer.getLoginUrl(),
                     MessageKey.ADMIN_AUTHENTICATION_REQUIRED_MESSAGE, lang);
             addObjectsToModelAndView(modelAndView, pageLoginParams, secureService.getEncryptMethodName(), lang);
-            response.setStatus(403);
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return modelAndView;
         }
 
