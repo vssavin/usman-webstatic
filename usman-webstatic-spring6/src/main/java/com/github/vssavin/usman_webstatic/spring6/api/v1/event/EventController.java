@@ -15,6 +15,7 @@ import com.github.vssavin.usmancore.data.pagination.Paged;
 import com.github.vssavin.usmancore.spring6.event.EventService;
 import com.github.vssavin.usmancore.spring6.user.UserSecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -99,7 +100,7 @@ public class EventController extends UsmanWebstaticBaseController implements Arg
             modelAndView = getErrorModelAndView(urlsConfigurer.getLoginUrl(),
                     MessageKey.ADMIN_AUTHENTICATION_REQUIRED_MESSAGE, lang);
             addObjectsToModelAndView(modelAndView, pageLoginParams, secureService.getEncryptMethodName(), lang);
-            response.setStatus(403);
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return modelAndView;
         }
 
