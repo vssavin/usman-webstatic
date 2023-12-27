@@ -18,6 +18,7 @@ import com.github.vssavin.usmancore.user.UserDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.mail.MailException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -188,7 +189,7 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
             modelAndView = getErrorModelAndView(PAGE_REGISTRATION, MessageKey.AUTHENTICATION_REQUIRED_MESSAGE, lang);
             addObjectsToModelAndView(modelAndView, pageRegistrationParams, secureService.getEncryptMethodName(), lang);
 
-            response.setStatus(500);
+            response.setStatus(HttpStatus.UNAUTHORIZED.value());
             return modelAndView;
         }
 
@@ -200,7 +201,7 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
                         lang);
                 addObjectsToModelAndView(modelAndView, pageRegistrationParams, secureService.getEncryptMethodName(),
                         lang);
-                response.setStatus(400);
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return modelAndView;
             }
 
@@ -208,7 +209,7 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
                 modelAndView = getErrorModelAndView(PAGE_REGISTRATION, MessageKey.EMAIL_NOT_VALID_MESSAGE, lang);
                 addObjectsToModelAndView(modelAndView, pageRegistrationParams, secureService.getEncryptMethodName(),
                         lang);
-                response.setStatus(400);
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return modelAndView;
             }
 
@@ -219,7 +220,7 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
                 modelAndView = new ModelAndView(REDIRECT_PREFIX + PAGE_REGISTRATION);
                 modelAndView.addObject(ERROR_ATTRIBUTE, true);
                 modelAndView.addObject(ERROR_MSG_ATTRIBUTE, usmanConfigurer.getPasswordPatternErrorMessage());
-                response.setStatus(400);
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return modelAndView;
             }
 
@@ -227,7 +228,7 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
                 modelAndView = getErrorModelAndView(PAGE_REGISTRATION, MessageKey.EMAIL_EXISTS_MESSAGE, lang);
                 addObjectsToModelAndView(modelAndView, pageRegistrationParams, secureService.getEncryptMethodName(),
                         lang);
-                response.setStatus(400);
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return modelAndView;
             }
 
@@ -244,14 +245,15 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
         catch (UserExistsException e) {
             modelAndView = getErrorModelAndView(PAGE_REGISTRATION, MessageKey.USER_EXISTS_PATTERN, lang, username);
             addObjectsToModelAndView(modelAndView, pageRegistrationParams, secureService.getEncryptMethodName(), lang);
-            response.setStatus(400);
+            response.setStatus(HttpStatus.BAD_REQUEST.value());
             return modelAndView;
         }
         catch (Exception e) {
 
             modelAndView = getErrorModelAndView(PAGE_REGISTRATION, MessageKey.CREATE_USER_ERROR_MESSAGE, lang);
             addObjectsToModelAndView(modelAndView, pageRegistrationParams, secureService.getEncryptMethodName(), lang);
-            response.setStatus(500);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
+            log.error("Registration user error!", e);
             return modelAndView;
         }
 
@@ -301,7 +303,7 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
                             MessageKey.AUTHENTICATION_REQUIRED_MESSAGE, lang);
                     addObjectsToModelAndView(modelAndView, pageChangePasswordParams,
                             secureService.getEncryptMethodName(), lang);
-                    response.setStatus(403);
+                    response.setStatus(HttpStatus.UNAUTHORIZED.value());
                     return modelAndView;
                 }
                 User user = userService.getUserByLogin(authorizedUserName);
@@ -317,7 +319,7 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
                     else {
                         modelAndView = getErrorModelAndView(PAGE_CHANGE_PASSWORD, MessageKey.WRONG_PASSWORD_MESSAGE,
                                 lang);
-                        response.setStatus(500);
+                        response.setStatus(HttpStatus.BAD_REQUEST.value());
                         addObjectsToModelAndView(modelAndView, pageChangePasswordParams,
                                 secureService.getEncryptMethodName(), lang);
                         return modelAndView;
@@ -328,7 +330,7 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
             else {
                 modelAndView = getErrorModelAndView(PAGE_CHANGE_PASSWORD, MessageKey.AUTHENTICATION_REQUIRED_MESSAGE,
                         lang);
-                response.setStatus(500);
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 addObjectsToModelAndView(modelAndView, pageChangePasswordParams, secureService.getEncryptMethodName(),
                         lang);
                 return modelAndView;
@@ -339,13 +341,13 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
             modelAndView = getErrorModelAndView(PAGE_CHANGE_PASSWORD, MessageKey.REQUEST_PROCESSING_ERROR, lang);
             addObjectsToModelAndView(modelAndView, pageChangePasswordParams, secureService.getEncryptMethodName(),
                     lang);
-            response.setStatus(500);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
             return modelAndView;
         }
 
         modelAndView = getSuccessModelAndView(PAGE_CHANGE_PASSWORD, MessageKey.PASSWORD_SUCCESSFULLY_CHANGED_MESSAGE,
                 lang);
-        response.setStatus(200);
+
         addObjectsToModelAndView(modelAndView, pageChangePasswordParams, secureService.getEncryptMethodName(), lang);
         addObjectsToModelAndView(modelAndView, request.getParameterMap(), IGNORED_PARAMS);
 
@@ -353,8 +355,9 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
     }
 
     @GetMapping(value = { "/" + PAGE_CONFIRM_USER, "/" + PAGE_CONFIRM_USER + ".html" })
-    ModelAndView confirmUser(final HttpServletRequest request, @RequestParam final String login,
-            @RequestParam(required = false) String verificationId, @RequestParam(required = false) final String lang) {
+    ModelAndView confirmUser(final HttpServletRequest request, final HttpServletResponse response,
+            @RequestParam final String login, @RequestParam(required = false) String verificationId,
+            @RequestParam(required = false) final String lang) {
         ModelAndView modelAndView;
         boolean isAdminUser = false;
 
@@ -377,6 +380,8 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
         catch (Exception e) {
             resultMessage = UsmanLocaleConfig.getMessage(PAGE_CONFIRM_USER, MessageKey.CONFIRM_FAILED_MESSAGE.getKey(),
                     lang);
+            log.error("User confirmation failed!", e);
+            response.setStatus(HttpStatus.INTERNAL_SERVER_ERROR.value());
         }
 
         modelAndView = new ModelAndView(PAGE_CONFIRM_USER);
@@ -480,7 +485,7 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
                 modelAndView = getErrorModelAndView(urlsConfigurer.getLoginUrl(),
                         MessageKey.ADMIN_AUTHENTICATION_REQUIRED_MESSAGE, lang);
                 addObjectsToModelAndView(modelAndView, pageLoginParams, secureService.getEncryptMethodName(), lang);
-                response.setStatus(403);
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 addObjectsToModelAndView(modelAndView, request.getParameterMap(), IGNORED_PARAMS);
                 return modelAndView;
             }
@@ -523,7 +528,7 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
                 modelAndView = getErrorModelAndView(urlsConfigurer.getLoginUrl(),
                         MessageKey.ADMIN_AUTHENTICATION_REQUIRED_MESSAGE, lang);
                 addObjectsToModelAndView(modelAndView, pageLoginParams, secureService.getEncryptMethodName(), lang);
-                response.setStatus(403);
+                response.setStatus(HttpStatus.UNAUTHORIZED.value());
                 addObjectsToModelAndView(modelAndView, request.getParameterMap(), IGNORED_PARAMS);
                 modelAndView.setViewName(modelAndView.getViewName() + "/" + userDto.getLogin());
                 return modelAndView;
@@ -533,7 +538,7 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
                 modelAndView = getErrorModelAndView(PAGE_USER_EDIT, MessageKey.EMAIL_NOT_VALID_MESSAGE, lang);
                 addObjectsToModelAndView(modelAndView, pageUserEditParams, secureService.getEncryptMethodName(), lang);
                 modelAndView.setViewName(modelAndView.getViewName() + "/" + userFromDatabase.getLogin());
-                response.setStatus(400);
+                response.setStatus(HttpStatus.BAD_REQUEST.value());
                 return modelAndView;
             }
 
