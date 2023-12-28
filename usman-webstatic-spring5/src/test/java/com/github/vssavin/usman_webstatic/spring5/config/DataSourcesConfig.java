@@ -31,7 +31,7 @@ public class DataSourcesConfig {
         return appDataSource;
     }
 
-    @Bean("usmanDataSource")
+    @Bean("usmanDatasource")
     @Profile("usman-test")
     public DataSource usmanDataSourceTest() {
         return appDatasource();
