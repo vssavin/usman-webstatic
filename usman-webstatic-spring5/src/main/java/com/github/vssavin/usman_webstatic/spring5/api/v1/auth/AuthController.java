@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -69,6 +70,13 @@ public class AuthController extends UsmanWebstaticBaseController implements Argu
         this.userSecurityService = userSecurityService;
     }
 
+    @Override
+    public void notifyArgumentsProcessed(Class<?> aClass) {
+        if (aClass != null && UsmanSecureServiceArgumentsHandler.class.isAssignableFrom(aClass)) {
+            this.secureService = usmanConfigurer.getSecureService();
+        }
+    }
+
     /**
      * Manually register mappings for login and logout methods.
      * @throws NoSuchMethodException if login/logout methods not found
@@ -84,15 +92,25 @@ public class AuthController extends UsmanWebstaticBaseController implements Argu
 
         Method logoutMethod = AuthController.class.getDeclaredMethod("getLogout", String.class);
 
-        handlerMapping.registerMapping(RequestMappingInfo.paths(urlsConfigurer.getLoginUrl())
-            .methods(RequestMethod.GET)
-            .options(options)
-            .build(), this, loginMethod);
+        if (useOptions()) {
+            handlerMapping.registerMapping(RequestMappingInfo.paths(urlsConfigurer.getLoginUrl())
+                .methods(RequestMethod.GET)
+                .options(options)
+                .build(), this, loginMethod);
+            handlerMapping.registerMapping(RequestMappingInfo.paths(urlsConfigurer.getLogoutUrl())
+                .methods(RequestMethod.GET)
+                .options(options)
+                .build(), this, logoutMethod);
+        }
+        else {
+            handlerMapping.registerMapping(
+                    RequestMappingInfo.paths(urlsConfigurer.getLoginUrl()).methods(RequestMethod.GET).build(), this,
+                    loginMethod);
+            handlerMapping.registerMapping(
+                    RequestMappingInfo.paths(urlsConfigurer.getLogoutUrl()).methods(RequestMethod.GET).build(), this,
+                    logoutMethod);
+        }
 
-        handlerMapping.registerMapping(RequestMappingInfo.paths(urlsConfigurer.getLogoutUrl())
-            .methods(RequestMethod.GET)
-            .options(options)
-            .build(), this, logoutMethod);
     }
 
     ModelAndView getLogin(final HttpServletRequest request, final HttpServletResponse response,
@@ -125,18 +143,29 @@ public class AuthController extends UsmanWebstaticBaseController implements Argu
         return modelAndView;
     }
 
+    private String getSpringWebSecurityVersion() {
+        Package pkg = SecurityFilterChain.class.getPackage();
+        return (pkg != null ? pkg.getImplementationVersion() : "");
+    }
+
+    // Need to add options when spring-security version >= 5.6.0
+    private boolean useOptions() {
+        // true if version >= 5.6.0
+        boolean useOptions = false;
+        String version = getSpringWebSecurityVersion();
+        String[] splitted = version.split("\\.");
+        if (splitted.length > 1 && (Integer.parseInt(splitted[1]) > 5)) {
+            useOptions = true;
+        }
+
+        return useOptions;
+    }
+
     private List<String> normalizeScriptNames(List<String> scripts) {
         String jsPrefix = "/js";
         return scripts.stream()
             .map(scriptName -> scriptName.substring(scriptName.indexOf(jsPrefix)))
             .collect(Collectors.toList());
-    }
-
-    @Override
-    public void notifyArgumentsProcessed(Class<?> aClass) {
-        if (aClass != null && UsmanSecureServiceArgumentsHandler.class.isAssignableFrom(aClass)) {
-            this.secureService = usmanConfigurer.getSecureService();
-        }
     }
 
 }
