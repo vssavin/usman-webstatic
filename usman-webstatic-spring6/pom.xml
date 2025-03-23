@@ -5,7 +5,7 @@
 
     <groupId>com.github.vssavin.usman-webstatic</groupId>
     <artifactId>usman-webstatic-spring6</artifactId>
-    <version>0.0.2</version>
+    <version>0.0.3</version>
     <packaging>jar</packaging>
 
     <parent>
@@ -32,7 +32,7 @@
             <version>0.0.2</version>
         </dependency>
         <dependency>
-            <groupId>com.github.vssavin</groupId>
+            <groupId>com.github.vssavin.usman-webstatic</groupId>
             <artifactId>usman-webstatic-core</artifactId>
             <version>0.0.3</version>
         </dependency>
