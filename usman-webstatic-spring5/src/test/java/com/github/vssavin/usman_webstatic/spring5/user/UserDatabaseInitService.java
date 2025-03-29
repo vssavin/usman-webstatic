@@ -1,17 +1,20 @@
 package com.github.vssavin.usman_webstatic.spring5.user;
 
 import com.github.vssavin.usmancore.config.Role;
-import com.github.vssavin.usmancore.spring5.event.Event;
-import com.github.vssavin.usmancore.spring5.event.EventRepository;
+import com.github.vssavin.usmancore.event.EventType;
+import com.github.vssavin.usmancore.security.auth.UsmanUsernamePasswordAuthenticationToken;
+import com.github.vssavin.usmancore.spring5.auth.AuthService;
 import com.github.vssavin.usmancore.spring5.user.User;
-import com.github.vssavin.usmancore.spring5.user.UserRepository;
 import com.github.vssavin.usmancore.spring5.user.UserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.servlet.http.HttpServletRequest;
 
 import java.util.*;
 
@@ -27,28 +30,18 @@ public class UserDatabaseInitService {
 
     private final UserService userService;
 
+    private final AuthService authService;
+
     private final PasswordEncoder passwordEncoder;
-
-    private final UserRepository userRepository;
-
-    private final EventRepository eventRepository;
 
     private final int countUsers;
 
     private final Map<String, String> passwordHashes = new HashMap<>();
 
-    private final Map<Long, User> initUsersMap = new HashMap<>();
-
-    private final Map<Long, Event> initEventsMap = new HashMap<>();
-
-    private Iterable<User> initUsers = new ArrayList<>();
-
-    public UserDatabaseInitService(UserService userService, PasswordEncoder passwordEncoder,
-            UserRepository userRepository, EventRepository eventRepository) {
+    public UserDatabaseInitService(UserService userService, AuthService authService, PasswordEncoder passwordEncoder) {
         this.userService = userService;
+        this.authService = authService;
         this.passwordEncoder = passwordEncoder;
-        this.userRepository = userRepository;
-        this.eventRepository = eventRepository;
         String countUsersString = System.getProperty("userGenerator.count");
         int tmpCountUsers = DEFAULT_USERS_COUNT;
         if (countUsersString != null) {
@@ -66,7 +59,28 @@ public class UserDatabaseInitService {
     @PostConstruct
     public void initUserDatabase() {
 
-        restoreDatabase();
+        try {
+            userService.getUserByLogin("admin");
+        }
+        catch (UsernameNotFoundException e) {
+            initUsers();
+            User adminUser = userService.getUserByLogin("admin");
+            HttpServletRequest request = new MockHttpServletRequest();
+
+            authService.processSuccessAuthentication(
+                    new UsmanUsernamePasswordAuthenticationToken(adminUser.getLogin(), adminUser.getPassword()),
+                    request, EventType.LOGGED_IN);
+        }
+    }
+
+    private void initUsers() {
+        Map<User, Role> userRoleMap = new HashMap<>();
+        userRoleMap.put(User.builder().login("admin").email("admin@example.com").password("admin").build(),
+                Role.ROLE_ADMIN);
+        userRoleMap.put(User.builder().login("user").email("user@example.com").password("user").build(),
+                Role.ROLE_USER);
+        userRoleMap.put(User.builder().login("user_new").email("user_new@example.com").password("user_new").build(),
+                Role.ROLE_USER);
 
         for (int i = 0; i < countUsers; i++) {
             String login = String.valueOf(i);
@@ -78,73 +92,22 @@ public class UserDatabaseInitService {
             }
             String email = login + "@" + login + ".com";
             Role role = Role.ROLE_USER;
-            try {
-                userService.registerUser(login, name, password, email, role);
-            }
-            catch (Exception e) {
-                log.error("Register user error: ", e);
-            }
+            userRoleMap.put(User.builder().login(login).name(name).email(email).password(password).build(), role);
         }
+
+        userRoleMap.forEach((user, role) -> {
+            try {
+                userService.registerUser(user.getLogin(), user.getUsername(),
+                        passwordEncoder.encode(user.getPassword()), user.getEmail(), role);
+            }
+            catch (UsernameNotFoundException e) {
+                // ignore
+            }
+        });
     }
 
     public UserService getUserService() {
         return userService;
-    }
-
-    private void restoreDatabase() {
-        if (initEventsMap.isEmpty()) {
-            eventRepository.findAll().forEach(event -> initEventsMap.put(event.getUserId(), event));
-        }
-
-        if (!initUsers.iterator().hasNext()) {
-            initUsers = userRepository.findAll();
-        }
-
-        userRepository.deleteAll();
-
-        if (initUsers.iterator().hasNext()) {
-            Iterable<User> newUsers;
-
-            newUsers = userRepository.saveAll(copyUsers(initUsers));
-            for (User user : initUsers) {
-                for (User newUser : newUsers) {
-                    if (user.getLogin().equals(newUser.getLogin())) {
-                        initUsersMap.put(user.getId(), newUser);
-                    }
-                }
-            }
-        }
-
-        for (Map.Entry<Long, User> entry : initUsersMap.entrySet()) {
-            Event event = initEventsMap.get(entry.getKey());
-            if (event != null) {
-                Event newEvent = new Event(entry.getValue().getId(), event.getEventType(), event.getEventTimestamp(),
-                        event.getEventMessage(), entry.getValue());
-                eventRepository.save(newEvent);
-            }
-        }
-    }
-
-    private List<User> copyUsers(Iterable<User> users) {
-        List<User> newUsers = new ArrayList<>();
-        for (User user : users) {
-            User newUser = User.builder()
-                .id(user.getId())
-                .login(user.getLogin())
-                .name(user.getName())
-                .password(user.getPassword())
-                .email(user.getEmail())
-                .authority(user.getAuthority())
-                .expirationDate(user.getExpirationDate())
-                .verificationId(user.getVerificationId())
-                .accountLocked(!user.isAccountNonLocked())
-                .credentialsExpired(!user.isCredentialsNonExpired())
-                .enabled(user.isEnabled())
-                .build();
-            newUsers.add(newUser);
-        }
-
-        return newUsers;
     }
 
 }
