@@ -5,7 +5,8 @@ import com.github.vssavin.usmancore.event.EventType;
 import com.github.vssavin.usmancore.security.auth.UsmanUsernamePasswordAuthenticationToken;
 import com.github.vssavin.usmancore.spring6.auth.AuthService;
 import com.github.vssavin.usmancore.spring6.user.User;
-import com.github.vssavin.usmancore.spring6.user.UserService;
+import com.github.vssavin.usmancore.user.UsmanUser;
+import com.github.vssavin.usmancore.user.UsmanUserService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,7 +29,7 @@ public class UserDatabaseInitService {
 
     private final Logger log = LoggerFactory.getLogger(UserDatabaseInitService.class);
 
-    private final UserService userService;
+    private final UsmanUserService userService;
 
     private final AuthService authService;
 
@@ -38,7 +39,8 @@ public class UserDatabaseInitService {
 
     private final Map<String, String> passwordHashes = new HashMap<>();
 
-    public UserDatabaseInitService(UserService userService, AuthService authService, PasswordEncoder passwordEncoder) {
+    public UserDatabaseInitService(UsmanUserService userService, AuthService authService,
+            PasswordEncoder passwordEncoder) {
         this.userService = userService;
         this.authService = authService;
         this.passwordEncoder = passwordEncoder;
@@ -64,7 +66,7 @@ public class UserDatabaseInitService {
         }
         catch (UsernameNotFoundException e) {
             initUsers();
-            User adminUser = userService.getUserByLogin("admin");
+            UsmanUser adminUser = userService.getUserByLogin("admin");
             HttpServletRequest request = new MockHttpServletRequest();
 
             authService.processSuccessAuthentication(
@@ -106,7 +108,7 @@ public class UserDatabaseInitService {
         });
     }
 
-    public UserService getUserService() {
+    public UsmanUserService getUserService() {
         return userService;
     }
 

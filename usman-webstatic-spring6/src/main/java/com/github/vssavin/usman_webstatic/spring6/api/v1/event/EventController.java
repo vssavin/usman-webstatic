@@ -10,9 +10,9 @@ import com.github.vssavin.usmancore.config.UsmanUrlsConfigurer;
 import com.github.vssavin.usmancore.event.EventDto;
 import com.github.vssavin.usmancore.event.EventFilter;
 import com.github.vssavin.usmancore.event.EventType;
+import com.github.vssavin.usmancore.event.UsmanEventService;
 import com.github.vssavin.usmancore.security.SecureService;
 import com.github.vssavin.usmancore.data.pagination.Paged;
-import com.github.vssavin.usmancore.spring6.event.EventService;
 import com.github.vssavin.usmancore.spring6.user.UserSecurityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -56,7 +56,7 @@ public class EventController extends UsmanWebstaticBaseController implements Arg
 
     private final UserSecurityService userSecurityService;
 
-    private final EventService eventService;
+    private final UsmanEventService eventService;
 
     private final Set<String> pageLoginParams;
 
@@ -64,7 +64,8 @@ public class EventController extends UsmanWebstaticBaseController implements Arg
 
     @Autowired
     public EventController(UsmanLocaleConfig localeConfig, UsmanConfigurer usmanConfigurer,
-            UsmanUrlsConfigurer urlsConfigurer, UserSecurityService userSecurityService, EventService eventService) {
+            UsmanUrlsConfigurer urlsConfigurer, UserSecurityService userSecurityService,
+            UsmanEventService eventService) {
         this.secureService = usmanConfigurer.getSecureService();
         this.userSecurityService = userSecurityService;
         this.usmanConfigurer = usmanConfigurer;

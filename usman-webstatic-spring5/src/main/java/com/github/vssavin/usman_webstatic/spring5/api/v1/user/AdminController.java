@@ -14,9 +14,10 @@ import com.github.vssavin.usmancore.security.SecureService;
 import com.github.vssavin.usmancore.spring5.user.User;
 import com.github.vssavin.usmancore.spring5.user.UserMapper;
 import com.github.vssavin.usmancore.spring5.user.UserSecurityService;
-import com.github.vssavin.usmancore.spring5.user.UserService;
 import com.github.vssavin.usmancore.user.UserDto;
 import com.github.vssavin.usmancore.user.UserFilter;
+import com.github.vssavin.usmancore.user.UsmanUser;
+import com.github.vssavin.usmancore.user.UsmanUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +91,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
 
     private final UsmanUrlsConfigurer urlsConfigurer;
 
-    private final UserService userService;
+    private final UsmanUserService userService;
 
     private final UserSecurityService userSecurityService;
 
@@ -104,7 +105,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
 
     @Autowired
     AdminController(UsmanConfigurer usmanConfigurer, UsmanUrlsConfigurer urlsConfigurer, UsmanLocaleConfig localeConfig,
-            UserService userService, UserSecurityService userSecurityService, PasswordEncoder passwordEncoder,
+            UsmanUserService userService, UserSecurityService userSecurityService, PasswordEncoder passwordEncoder,
             UserMapper userMapper) {
         this.usmanConfigurer = usmanConfigurer;
         this.urlsConfigurer = urlsConfigurer;
@@ -200,7 +201,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
             @RequestParam(required = false) final String role, @RequestParam(required = false) final String lang) {
         ModelAndView modelAndView;
 
-        User newUser;
+        UsmanUser newUser;
         Role registerRole;
         registerRole = Role.getRole(role);
 
@@ -302,7 +303,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
         try {
             String authorizedUserName = userSecurityService.getAuthorizedUserName(request);
             if (isAuthorizedUser(authorizedUserName)) {
-                User user = userService.getUserByLogin(userName);
+                UsmanUser user = userService.getUserByLogin(userName);
                 String realNewPassword = secureService.decrypt(newPassword,
                         secureService.getPrivateKey(request.getRemoteAddr()));
                 if (user != null) {
@@ -365,7 +366,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
 
         ModelAndView modelAndView = new ModelAndView(PAGE_USERS);
         if (userSecurityService.isAuthorizedAdmin(request)) {
-            Paged<User> users = userService.getUsers(userFilter, page, size);
+            Paged<UsmanUser> users = userService.getUsers(userFilter, page, size);
             modelAndView.addObject(USERS_ATTRIBUTE, users);
             modelAndView.addObject(USER_NAME_ATTRIBUTE, userSecurityService.getAuthorizedUserName(request));
         }
@@ -392,8 +393,8 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
 
         ModelAndView modelAndView = new ModelAndView(PAGE_EDIT);
         if (userSecurityService.isAuthorizedAdmin(request)) {
-            User user = userService.getUserById(id);
-            UserDto userDto = userMapper.toDto(user);
+            UsmanUser user = userService.getUserById(id);
+            UserDto userDto = userMapper.toDto((User) user);
             modelAndView.addObject(USER_ATTRIBUTE, userDto);
         }
         else {
@@ -442,8 +443,8 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
                     return modelAndView;
                 }
 
-                User userFromDatabase = userService.getUserById(userDto.getId());
-                User newUser = User.builder()
+                UsmanUser userFromDatabase = userService.getUserById(userDto.getId());
+                UsmanUser newUser = User.builder()
                     .id(userFromDatabase.getId())
                     .login(userDto.getLogin())
                     .name(userDto.getName())
@@ -502,7 +503,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
         if (userSecurityService.isAuthorizedAdmin(request)) {
             try {
                 modelAndView.addObject(USER_NAME_ATTRIBUTE, userSecurityService.getAuthorizedUserName(request));
-                User user = userService.getUserById(id);
+                UsmanUser user = userService.getUserById(id);
                 if (user.getLogin().isEmpty()) {
                     String errorMessage = UsmanLocaleConfig.getMessage(PAGE_USERS,
                             MessageKey.USER_DELETE_ERROR_MESSAGE.getKey(), lang);
@@ -529,7 +530,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
             return modelAndView;
         }
 
-        Paged<User> users = userService.getUsers(UserFilter.emptyUserFilter(), page, size);
+        Paged<UsmanUser> users = userService.getUsers(UserFilter.emptyUserFilter(), page, size);
         modelAndView.addObject(USERS_ATTRIBUTE, users);
 
         addObjectsToModelAndView(modelAndView, pageUsersParams, secureService.getEncryptMethodName(), lang);
@@ -554,7 +555,7 @@ final class AdminController extends UsmanWebstaticBaseController implements Argu
         // login is valid if user not found or user.id equals id
         boolean loginValid = true;
         try {
-            User user = userService.getUserByLogin(login);
+            UsmanUser user = userService.getUserByLogin(login);
             if (!Objects.equals(user.getId(), id)) {
                 loginValid = false;
             }

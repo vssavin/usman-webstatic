@@ -6,6 +6,7 @@ import com.github.vssavin.usman_webstatic.spring5.user.UserDatabaseInitService;
 import com.github.vssavin.usmancore.config.UsmanConfigurer;
 import com.github.vssavin.usmancore.security.SecureService;
 import com.github.vssavin.usmancore.spring5.user.User;
+import com.github.vssavin.usmancore.user.UsmanUser;
 import org.junit.Before;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,7 +74,7 @@ public abstract class AbstractTest {
             .build();
     }
 
-    protected RequestPostProcessor getRequestPostProcessorForUser(User user) {
+    protected RequestPostProcessor getRequestPostProcessorForUser(UsmanUser user) {
         return user(user.getLogin()).password(user.getPassword()).roles(user.getAuthority());
     }
 

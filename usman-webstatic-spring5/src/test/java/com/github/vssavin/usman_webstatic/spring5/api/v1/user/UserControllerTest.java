@@ -6,7 +6,7 @@ import com.github.vssavin.usman_webstatic_core.MessageKey;
 import com.github.vssavin.usman_webstatic_core.UsmanLocaleConfig;
 import com.github.vssavin.usmancore.config.Role;
 import com.github.vssavin.usmancore.exception.user.UserNotFoundException;
-import com.github.vssavin.usmancore.spring5.user.User;
+import com.github.vssavin.usmancore.user.UsmanUser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -176,7 +176,7 @@ public class UserControllerTest extends AbstractTest {
                 new Object[] {}, UsmanLocaleConfig.DEFAULT_LOCALE);
         resultActions.andExpect(model().attribute("success", true))
             .andExpect(model().attribute("successMsg", String.format(message, login)));
-        User user = userDatabaseInitService.getUserService().getUserByLogin(login);
+        UsmanUser user = userDatabaseInitService.getUserService().getUserByLogin(login);
         userDatabaseInitService.getUserService().deleteUser(user);
     }
 
@@ -275,7 +275,7 @@ public class UserControllerTest extends AbstractTest {
     @Test
     public void userEditSuccess() throws Exception {
         MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
-        User user = findFirstUser();
+        UsmanUser user = findFirstUser();
         Assertions.assertNotNull(user);
         String authority = user.getAuthority();
         Role role = Role.getRole(authority);
@@ -292,8 +292,8 @@ public class UserControllerTest extends AbstractTest {
         Assertions.assertTrue(success);
     }
 
-    private User findFirstUser() {
-        User user = null;
+    private UsmanUser findFirstUser() {
+        UsmanUser user = null;
         for (long id = 0; id < 1000; id++) {
             try {
                 user = userDatabaseInitService.getUserService().getUserById(id);

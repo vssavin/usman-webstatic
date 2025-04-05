@@ -13,8 +13,9 @@ import com.github.vssavin.usmancore.exception.user.UserServiceException;
 import com.github.vssavin.usmancore.security.SecureService;
 import com.github.vssavin.usmancore.spring6.user.User;
 import com.github.vssavin.usmancore.spring6.user.UserSecurityService;
-import com.github.vssavin.usmancore.spring6.user.UserService;
 import com.github.vssavin.usmancore.user.UserDto;
+import com.github.vssavin.usmancore.user.UsmanUser;
+import com.github.vssavin.usmancore.user.UsmanUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -90,7 +91,7 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
 
     private final UsmanConfigurer usmanConfigurer;
 
-    private final UserService userService;
+    private final UsmanUserService userService;
 
     private final UserSecurityService userSecurityService;
 
@@ -104,7 +105,7 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
 
     @Autowired
     UserController(UsmanConfigurer usmanConfigurer, UsmanUrlsConfigurer urlsConfigurer, UsmanLocaleConfig localeConfig,
-            UserService userService, UserSecurityService userSecurityService, EmailService emailService,
+            UsmanUserService userService, UserSecurityService userSecurityService, EmailService emailService,
             PasswordEncoder passwordEncoder) {
         super(urlsConfigurer);
         this.usmanConfigurer = usmanConfigurer;
@@ -181,7 +182,7 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
             return getForbiddenModelAndView(request);
         }
 
-        User newUser;
+        UsmanUser newUser;
         Role registerRole;
         registerRole = Role.getRole(role);
 
@@ -306,7 +307,7 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
                     response.setStatus(HttpStatus.UNAUTHORIZED.value());
                     return modelAndView;
                 }
-                User user = userService.getUserByLogin(authorizedUserName);
+                UsmanUser user = userService.getUserByLogin(authorizedUserName);
                 String realNewPassword = secureService.decrypt(newPassword,
                         secureService.getPrivateKey(request.getRemoteAddr()));
                 String realCurrentPassword = secureService.decrypt(currentPassword,
@@ -400,7 +401,7 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
         boolean successSend = true;
         if (!recoveryId.isEmpty()) {
             try {
-                User user = userService.getUserByRecoveryId(recoveryId);
+                UsmanUser user = userService.getUserByRecoveryId(recoveryId);
                 String newPassword = userService.generateNewUserPassword(recoveryId);
                 String message = "Your new password: " + newPassword;
                 emailService.sendSimpleMessage(user.getEmail(), "Your new password: ", message);
@@ -429,11 +430,11 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
         ModelAndView modelAndView = new ModelAndView(REDIRECT_PREFIX + PAGE_RECOVERY_PASSWORD);
         boolean successSend = true;
         try {
-            Map<String, User> map = userService.getUserRecoveryId(loginOrEmail);
+            Map<String, UsmanUser> map = userService.getUserRecoveryId(loginOrEmail);
             Optional<String> optionalRecoveryId = map.keySet().stream().findFirst();
 
             if (optionalRecoveryId.isPresent()) {
-                User user = map.get(optionalRecoveryId.get());
+                UsmanUser user = map.get(optionalRecoveryId.get());
                 String message = usmanConfigurer.getApplicationUrl() + USER_CONTROLLER_PATH + "/"
                         + PAGE_RECOVERY_PASSWORD + "?recoveryId=" + optionalRecoveryId.get();
                 emailService.sendSimpleMessage(user.getEmail(), "Password recovery", message);
@@ -477,7 +478,7 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
         }
 
         ModelAndView modelAndView = new ModelAndView(PAGE_USER_EDIT);
-        User user;
+        UsmanUser user;
         try {
             user = userService.getUserByLogin(login);
 
@@ -520,9 +521,9 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
             @ModelAttribute final UserDto userDto, @RequestParam(required = false) final String lang) {
 
         ModelAndView modelAndView = new ModelAndView(PAGE_USER_EDIT);
-        User newUser;
+        UsmanUser newUser;
         try {
-            User userFromDatabase = userService.getUserById(userDto.getId());
+            UsmanUser userFromDatabase = userService.getUserById(userDto.getId());
 
             if (!userSecurityService.getAuthorizedUserLogin(request).equals(userFromDatabase.getLogin())) {
                 modelAndView = getErrorModelAndView(urlsConfigurer.getLoginUrl(),
@@ -600,7 +601,7 @@ final class UserController extends Spring6WebstaticBaseController implements Arg
         }
 
         ModelAndView modelAndView = new ModelAndView(PAGE_USER_CONTROL_PANEL);
-        User user;
+        UsmanUser user;
         try {
             String login = userSecurityService.getAuthorizedUserLogin(request);
             user = userService.getUserByLogin(login);
