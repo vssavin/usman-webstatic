@@ -5,13 +5,13 @@
     <parent>
         <groupId>com.github.vssavin</groupId>
         <artifactId>usman-webstatic-parent</artifactId>
-        <version>0.0.5</version>
+        <version>0.1.0</version>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.github.vssavin.usman-webstatic-core</groupId>
     <artifactId>usman-webstatic-core</artifactId>
-    <version>0.0.5</version>
+    <version>${project.parent.version}</version>
     <packaging>jar</packaging>
 
     <properties>
